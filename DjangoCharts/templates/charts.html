@@ -40,22 +40,27 @@ function setChart(){
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',
                 'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
+                'rgba(5, 192, 92, 0.2)',
+                'rgba(153, 102, 25, 0.2)',
+                'rgba(255, 19, 64, 0.2)'
             ],
             borderColor: [
                 'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
+                'rgba(54, 16, 35, 1)',
+                'rgba(255, 206, 6, 1)',
+                'rgba(5, 192, 192, 1)',
                 'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
+                'rgba(255, 19, 64, 1)'
             ],
             borderWidth: 1
         }]
     },
     options: {
+        title: {
+                    display: true,
+                    position: 'left',
+                    text: 'Numbers Effected'
+                },
         scales: {
             yAxes: [{
                 ticks: {
@@ -67,7 +72,7 @@ function setChart(){
 });
 
     var myChart = new Chart(ctx2, {
-    type: 'bar',
+    type: 'line',
     data: {
         labels: labels,
         datasets: [{
@@ -77,9 +82,9 @@ function setChart(){
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',
                 'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
+                'rgba(5, 192, 92, 0.2)',
+                'rgba(153, 102, 25, 0.2)',
+                'rgba(255, 19, 64, 0.2)'
             ],
             borderColor: [
                 'rgba(255, 99, 132, 1)',
@@ -93,6 +98,11 @@ function setChart(){
         }]
     },
     options: {
+        title: {
+                    display: true,
+                    position: 'left',
+                    text: 'Numbers Recovered'
+                },
         scales: {
             yAxes: [{
                 ticks: {
@@ -118,14 +128,112 @@ function convertJSONresponse(data,fieldName){
 
 <script>
 {% block scripts %}
+
+var lat_long = []
+var myvar='';
+
+ $(document).ready(function(){
+    
+})
+
+
+    function convertJSONresponse(data,fieldName){
+        req_data = []
+        for(let i = 0; i<data.length ;i++){
+            req_data.push(data[i][fieldName]);
+        }
+
+        return req_data
+    }
+
+    function processLatLong(latLongData){
+        
+        let splitted = [];
+        let marker = [];
+
+        for(let i = 0; i<latLongData.length ; i++){
+
+            splitted = latLongData[i].split(",");
+            console.log(splitted)
+
+            c = {
+                lat: parseFloat(splitted[0]),
+                lng: parseFloat(splitted[1])
+            }
+
+            marker_obj = {
+                coords:c
+            }
+
+            marker.push(marker_obj);
+        }
+
+        return marker;
+    }
+
+
+    function getData(){
+         var endpoint = '/api/data/'
+    
+            return $.ajax({
+                method: "GET",
+                url: endpoint,
+                error: function(error_data){
+                    console.log("error")
+                    console.log(error_data)
+                }
+            })
+    }
+
+    function handleData(data){
+        lat_long = data;
+    }
+
+    getData().done(handleData);
+    
+
 function initMap(){
-            console.log("calling this function");
+            
+            //console.log("outside the method we have simply")
+
+            var coordinates = processLatLong(convertJSONresponse(lat_long.lat_long,"lat_long"));
+            var num_effected = convertJSONresponse(lat_long.number_effected,"number_effected");
+            //console.log(num_effected);
+
+            info = {};
+
+            for(let i = 0; i<coordinates.length;i++){
+                coordinates[i]["effected"]=num_effected[i];
+            }
+
+            console.log(coordinates);   
+            
+
             var options = {
-                zoom:8,
-                center:{lat:42.3601,lng:-71.0589}
+                zoom:3,
+                center:{lat:41.8719,lng:12.5674}
             }
 
             var map = new google.maps.Map(document.getElementById('map'),options)
+
+            /*for(var i = 0; i<coordinates.length ;i++){
+                    addMarker(coordinates[i]);
+            }*/         
+
+
+             for (var city in coordinates) {
+                // Add the circle for this city to the map.
+                var cityCircle = new google.maps.Circle({
+                    strokeColor: '#FF0000',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 4,
+                    fillColor: '#FF0000',
+                    fillOpacity: 0.35,
+                    map: map,
+                    center: coordinates[city].coords,
+                    radius: Math.sqrt(coordinates[city].effected) * 3000
+                });
+                }
 
             //Listen for click on map
 
@@ -135,74 +243,20 @@ function initMap(){
             })
 
 
-            /*var marker = new google.maps.Marker({
-                position:{lat:42.4668,lng:-70.9495},
-                map:map
-
-            })
-
-            var infoWindow = new google.maps.InfoWindow({
-                content:'<h1>Hello</h1>'
-            })
-
-            marker.addListener('click',function(){
-                infoWindow.open(map, marker)
-            })*/
-
-
-            //Array of markers
-            var markers = [
-                {
-                coords:{lat:42.4668,lng:-70.9495},
-                content:'<b>hello</b>'
-            },
-                {
-                coords:{lat:42.8584,lng:-70.9300},
-                content:'<h1>sex</h1>'
-            },
-                {
-                coords:{lat:42.3284,lng:-70.9300},
-                content:'<h1>sexy</h1>'
-            }
-            ];
-
-
-
-            for(var i = 0; i<markers.length ;i++){
-                    addMarker(markers[i]);
-            }
-
-
             //Add marker function
             function addMarker(proops){
                 var marker = new google.maps.Marker({
                 position:proops.coords,
                 map:map,
-                content:'<h1>mass</h1>'
                 //icon:proops.iconImage
 
             })
-            //check
-            if(proops.iconImage){
-                //set icon image
-                marker.setIcon(props.iconImage)
-            }
-
-            //check content
-            if(proops.content){
-                var infoWindow = new google.maps.InfoWindow({
-                content:proops.content
-            })
-            }
-
-            marker.addListener('click',function(){
-                infoWindow.open(map, marker)
-            })
-
-            }
-
+            
 
         }
+
+
+    }
 
 
 {% endblock %}
@@ -211,15 +265,15 @@ function initMap(){
 
 {% block content %}
 
-<div id="map" style = " height: 500px;width: 1000px;margin: auto;"></div>
+<div id="map" style = " height: 500px;width: 1200px;margin: auto;"></div>
 
-<div class='row' style = "position:absolute; top:500px; left:500px;">
+<div class='row' style = "position:absolute; top:500px; left:500px; padding-top:30px">
     <div class='col-sm-12' >
         <div class='col-sm-6'>
-            <canvas id="myChart" width="400" height="400"></canvas>
+            <canvas id="myChart" width="450" height="450"></canvas>
         </div>
         <div class='col-sm-6'>
-            <canvas id="myChart2" width="400" height="400"></canvas>
+            <canvas id="myChart2" width="450" height="450"></canvas>
         </div>
 
 

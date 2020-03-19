@@ -12,5 +12,6 @@ def get_data(request):
         "number_effected": list(DiseaseEntry.objects.all().values('number_effected')),
         "Countries": list(DiseaseEntry.objects.all().values('country_name')),
         "numbers_recovered": list(DiseaseEntry.objects.all().values('numbers_recovered')),
+        "lat_long": list(DiseaseEntry.objects.all().values('lat_long')),
     }
     return JsonResponse(data)

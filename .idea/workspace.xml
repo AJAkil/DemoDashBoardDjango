@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6ff615d5-e574-43ca-8b7a-2f80f342ef6e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DjangoCharts/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/DjangoCharts/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DjangoCharts/Charts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/DjangoCharts/Charts/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DjangoCharts/Charts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/DjangoCharts/Charts/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DjangoCharts/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/DjangoCharts/db.sqlite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DjangoCharts/templates/charts.html" beforeDir="false" afterPath="$PROJECT_DIR$/DjangoCharts/templates/charts.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
