@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 
+
 <script>
 {% block jquery %}
+
 var endpoint = '/api/data/'
 var numbers_effected = []
 var labels = []
@@ -12,11 +14,9 @@ $.ajax({
     method: "GET",
     url: endpoint,
     success: function(data){
-        console.log(data.Countries)
         labels = convertJSONresponse(data.Countries,"country_name")
         numbers_effected = convertJSONresponse(data.number_effected,"number_effected")
         numbers_recovered = convertJSONresponse(data.numbers_recovered,"numbers_recovered")
-        console.log(numbers_recovered)
         setChart();
     },
     error: function(error_data){
@@ -28,6 +28,7 @@ $.ajax({
 function setChart(){
     var ctx = document.getElementById('myChart').getContext('2d');
     var ctx2 = document.getElementById('myChart2').getContext('2d');
+
     var myChart = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -112,15 +113,107 @@ function convertJSONresponse(data,fieldName){
 }
 
 
+{% endblock %}
+</script>
 
+<script>
+{% block scripts %}
+function initMap(){
+            console.log("calling this function");
+            var options = {
+                zoom:8,
+                center:{lat:42.3601,lng:-71.0589}
+            }
+
+            var map = new google.maps.Map(document.getElementById('map'),options)
+
+            //Listen for click on map
+
+            google.maps.event.addListener(map,'click',function(event){
+                //Add marker where we click
+                addMarker({coords:event.latLng});
+            })
+
+
+            /*var marker = new google.maps.Marker({
+                position:{lat:42.4668,lng:-70.9495},
+                map:map
+
+            })
+
+            var infoWindow = new google.maps.InfoWindow({
+                content:'<h1>Hello</h1>'
+            })
+
+            marker.addListener('click',function(){
+                infoWindow.open(map, marker)
+            })*/
+
+
+            //Array of markers
+            var markers = [
+                {
+                coords:{lat:42.4668,lng:-70.9495},
+                content:'<b>hello</b>'
+            },
+                {
+                coords:{lat:42.8584,lng:-70.9300},
+                content:'<h1>sex</h1>'
+            },
+                {
+                coords:{lat:42.3284,lng:-70.9300},
+                content:'<h1>sexy</h1>'
+            }
+            ];
+
+
+
+            for(var i = 0; i<markers.length ;i++){
+                    addMarker(markers[i]);
+            }
+
+
+            //Add marker function
+            function addMarker(proops){
+                var marker = new google.maps.Marker({
+                position:proops.coords,
+                map:map,
+                content:'<h1>mass</h1>'
+                //icon:proops.iconImage
+
+            })
+            //check
+            if(proops.iconImage){
+                //set icon image
+                marker.setIcon(props.iconImage)
+            }
+
+            //check content
+            if(proops.content){
+                var infoWindow = new google.maps.InfoWindow({
+                content:proops.content
+            })
+            }
+
+            marker.addListener('click',function(){
+                infoWindow.open(map, marker)
+            })
+
+            }
+
+
+        }
 
 
 {% endblock %}
 </script>
 
+
 {% block content %}
 
-<div class='row'>
+<div id="map" style = " height: 500px;width: 1000px;margin: auto;"></div>
+
+<div class='row' style = "position:absolute; top:500px; left:500px;">
     <div class='col-sm-12' >
         <div class='col-sm-6'>
             <canvas id="myChart" width="400" height="400"></canvas>
@@ -134,3 +227,7 @@ function convertJSONresponse(data,fieldName){
 </div>
 
 {% endblock content %}
+
+
+
+
