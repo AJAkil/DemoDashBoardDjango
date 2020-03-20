@@ -8,6 +8,7 @@ var endpoint = '/api/data/'
 var numbers_effected = []
 var labels = []
 var numbers_recovered = []
+var deaths = []
 
 
 $.ajax({
@@ -17,6 +18,7 @@ $.ajax({
         labels = convertJSONresponse(data.Countries,"country_name")
         numbers_effected = convertJSONresponse(data.number_effected,"number_effected")
         numbers_recovered = convertJSONresponse(data.numbers_recovered,"numbers_recovered")
+        deaths = convertJSONresponse(data.deaths,"deaths")
         setChart();
     },
     error: function(error_data){
@@ -28,14 +30,16 @@ $.ajax({
 function setChart(){
     var ctx = document.getElementById('myChart').getContext('2d');
     var ctx2 = document.getElementById('myChart2').getContext('2d');
+    var ctx3 = document.getElementById('myChart3').getContext('2d');
+
 
     var myChart = new Chart(ctx, {
     type: 'bar',
     data: {
-        labels: labels,
+        labels: labels.slice(1,7),
         datasets: [{
-            label: 'Countries',
-            data: numbers_effected,
+            label: 'effected',
+            data: numbers_effected.slice(1,7),
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',
@@ -59,6 +63,7 @@ function setChart(){
         title: {
                     display: true,
                     position: 'left',
+                    fontSize: 14,
                     text: 'Numbers Effected'
                 },
         scales: {
@@ -71,13 +76,13 @@ function setChart(){
     }
 });
 
-    var myChart = new Chart(ctx2, {
+    var myChart2 = new Chart(ctx2, {
     type: 'line',
     data: {
-        labels: labels,
+        labels: labels.slice(1,7),
         datasets: [{
-            label: 'Countries',
-            data: numbers_recovered,
+            label: 'recovered',
+            data: numbers_recovered.slice(1,7),
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',
@@ -101,6 +106,7 @@ function setChart(){
         title: {
                     display: true,
                     position: 'left',
+                    fontSize: 14,
                     text: 'Numbers Recovered'
                 },
         scales: {
@@ -112,6 +118,51 @@ function setChart(){
         }
     }
 });
+
+
+var myChart3 = new Chart(ctx3, {
+    type: 'line',
+    data: {
+        labels: labels.slice(1,7),
+        datasets: [{
+            label: 'deaths',
+            data: deaths.slice(1,7),
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(5, 192, 92, 0.2)',
+                'rgba(153, 102, 25, 0.2)',
+                'rgba(255, 19, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        title: {
+                    display: true,
+                    position: 'left',
+                    fontSize: 14,
+                    text: 'deaths'
+                },
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
+
 }
 
 function convertJSONresponse(data,fieldName){
@@ -131,10 +182,6 @@ function convertJSONresponse(data,fieldName){
 
 var lat_long = []
 var myvar='';
-
- $(document).ready(function(){
-    
-})
 
 
     function convertJSONresponse(data,fieldName){
@@ -194,7 +241,6 @@ var myvar='';
 
 function initMap(){
             
-            //console.log("outside the method we have simply")
 
             var coordinates = processLatLong(convertJSONresponse(lat_long.lat_long,"lat_long"));
             var num_effected = convertJSONresponse(lat_long.number_effected,"number_effected");
@@ -220,7 +266,7 @@ function initMap(){
                     addMarker(coordinates[i]);
             }*/         
 
-
+             //For adding circles on the Map
              for (var city in coordinates) {
                 // Add the circle for this city to the map.
                 var cityCircle = new google.maps.Circle({
@@ -235,14 +281,7 @@ function initMap(){
                 });
                 }
 
-            //Listen for click on map
-
-            google.maps.event.addListener(map,'click',function(event){
-                //Add marker where we click
-                addMarker({coords:event.latLng});
-            })
-
-
+            
             //Add marker function
             function addMarker(proops){
                 var marker = new google.maps.Marker({
@@ -259,25 +298,33 @@ function initMap(){
     }
 
 
+
 {% endblock %}
 </script>
 
 
 {% block content %}
 
-<div id="map" style = " height: 500px;width: 1200px;margin: auto;"></div>
+<div id="map" style = " height: 450px;width: 1200px; margin: auto;position:absolute; top:450px; left:400px; padding-top:30px"></div>
 
-<div class='row' style = "position:absolute; top:500px; left:500px; padding-top:30px">
-    <div class='col-sm-12' >
-        <div class='col-sm-6'>
-            <canvas id="myChart" width="450" height="450"></canvas>
+<div class='row' style = "position:absolute; left:150px; padding-top:100px">
+        <div class="col-sm-4 border bg-dark">
+        <div style="width:550px;height:600px ;padding-right: 50px;">
+            <canvas id="myChart"></canvas>
         </div>
-        <div class='col-sm-6'>
-            <canvas id="myChart2" width="450" height="450"></canvas>
         </div>
+        <div class='col-sm-4 border bg-light'>
+           <div style="width:550px;height:600px;padding-right: 50px;">
+            <canvas id="myChart2"></canvas>
 
-
-    </div>
+        </div>
+        </div>
+        <div class='col-sm-4 border bg-light'>
+            <div style="width:550px;height:600px;padding-right: 50px;">
+            <canvas id="myChart3"></canvas>
+        </div>
+        </div>
+        
 </div>
 
 {% endblock content %}
